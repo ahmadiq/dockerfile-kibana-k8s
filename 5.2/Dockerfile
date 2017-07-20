@@ -59,24 +59,28 @@ RUN set -ex; \
 	done; \
 # If node is already installed remove local node
 # that came with kibana, as it gives error while
-# trying to run on alpine kibana will use pre-installed 
+# trying to run on alpine kibana will use pre-installed
 	NODE=$(which node); \
-	if [ -x "$NODE" ] && [ -d "./node" ]; then \ 
+	if [ -x "$NODE" ] && [ -d "./node" ]; then \
 		rm -rf node; \
 	fi;
-	
+
 # Add config file
-ADD ./config/kibana.yml /opt/kibana/config/kibana.yml
+# ADD ./config/kibana.yml /opt/kibana/config/kibana.yml
+
+RUN /opt/kibana/bin/kibana plugin -i kibana/timelion && \
+    chmod 777 /opt/kibana/config/ /opt/kibana/optimize/ && \
+    chmod 666 /opt/kibana/config/kibana.yml /opt/kibana/optimize/.babelcache.json
 
 # ensure the default configuration is useful when using --link
-RUN set -x \
-	&& sed -ri "s!^(\#\s*)?(elasticsearch\.url:).*!\2 'http://elasticsearch:9200'!" /opt/kibana/config/kibana.yml \
-	&& grep -q 'elasticsearch:9200' /opt/kibana/config/kibana.yml
+#RUN set -x \
+#	&& sed -ri "s!^(\#\s*)?(elasticsearch\.url:).*!\2 'http://elasticsearch:9200'!" /opt/kibana/config/kibana.yml \
+#	&& grep -q 'elasticsearch:9200' /opt/kibana/config/kibana.yml
 
 ENV PATH /opt/kibana/bin:$PATH
 
 # Simulate CMD behavior via environment variable
-# So that users are able to provice command line arguments to the app
+# So that users are able to provide command line arguments to the app
 ENV COMMAND "kibana"
 
 EXPOSE 5601
