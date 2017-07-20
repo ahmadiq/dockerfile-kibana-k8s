@@ -68,8 +68,7 @@ RUN set -ex; \
 # Add config file
 # ADD ./config/kibana.yml /opt/kibana/config/kibana.yml
 
-RUN /opt/kibana/bin/kibana-plugin install timelion && \
-    chmod 777 /opt/kibana/config/ /opt/kibana/optimize/ && \
+RUN chmod 777 /opt/kibana/config/ /opt/kibana/optimize/ && \
     chmod 666 /opt/kibana/config/kibana.yml /opt/kibana/optimize/.babelcache.json
 
 # ensure the default configuration is useful when using --link
